@@ -24,6 +24,7 @@ package ants
 
 import (
 	"log"
+	"sync"
 	"time"
 )
 
@@ -43,7 +44,7 @@ type WorkerWithFunc struct {
 
 // run starts a goroutine to repeat the process
 // that performs the function calls.
-func (w *WorkerWithFunc) run() {
+func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
 	w.pool.incRunning()
 	go func() {
 		defer func() {
@@ -54,6 +55,7 @@ func (w *WorkerWithFunc) run() {
 				} else {
 					log.Printf("worker exits from a panic: %v", p)
 				}
+				wg.Done()
 			}
 		}()
 
@@ -64,6 +66,7 @@ func (w *WorkerWithFunc) run() {
 				return
 			}
 			w.pool.poolFunc(args)
+			wg.Done()
 			w.pool.revertWorker(w)
 		}
 	}()

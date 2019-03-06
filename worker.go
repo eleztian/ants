@@ -24,6 +24,7 @@ package ants
 
 import (
 	"log"
+	"sync"
 	"time"
 )
 
@@ -43,7 +44,7 @@ type Worker struct {
 
 // run starts a goroutine to repeat the process
 // that performs the function calls.
-func (w *Worker) run() {
+func (w *Worker) run(wg *sync.WaitGroup) {
 	w.pool.incRunning()
 	go func() {
 		defer func() {
@@ -64,6 +65,7 @@ func (w *Worker) run() {
 				return
 			}
 			f()
+			wg.Done()
 			w.pool.revertWorker(w)
 		}
 	}()

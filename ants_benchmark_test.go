@@ -124,7 +124,7 @@ func BenchmarkAntsPool(b *testing.B) {
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < RunTimes; j++ {
-			p.Invoke(benchParam)
+			_ = p.Invoke(benchParam)
 		}
 	}
 	b.StopTimer()

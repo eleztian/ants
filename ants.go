@@ -65,7 +65,7 @@ var (
 		return 1
 	}()
 
-    defaultAntsPool, _ = NewPool(DefaultAntsPoolSize)
+	defaultAntsPool, _ = NewPool(DefaultAntsPoolSize)
 )
 
 // Init a instance pool when importing ants.
@@ -93,4 +93,9 @@ func Free() int {
 // Release Closes the default pool.
 func Release() {
 	_ = defaultAntsPool.Release()
+}
+
+// Wait wait all task finished.
+func Wait() {
+	defaultAntsPool.Wait()
 }

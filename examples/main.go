@@ -24,11 +24,10 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"sync/atomic"
 	"time"
 
-	"github.com/panjf2000/ants"
+	"github.com/eleztian/ants"
 )
 
 var sum int32
@@ -37,6 +36,9 @@ func myFunc(i interface{}) {
 	n := i.(int32)
 	atomic.AddInt32(&sum, n)
 	fmt.Printf("run with %d\n", n)
+	if n == 0 || n == 9 {
+		panic(i)
+	}
 }
 
 func demoFunc() {
@@ -47,19 +49,16 @@ func demoFunc() {
 func main() {
 	defer ants.Release()
 
-	runTimes := 1000
+	runTimes := 10
 
 	// Use the common pool.
-	var wg sync.WaitGroup
 	syncCalculateSum := func() {
 		demoFunc()
-		wg.Done()
 	}
 	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
 		ants.Submit(syncCalculateSum)
 	}
-	wg.Wait()
+	ants.Wait()
 	fmt.Printf("running goroutines: %d\n", ants.Running())
 	fmt.Printf("finish all tasks.\n")
 
@@ -67,15 +66,16 @@ func main() {
 	// set 10 to the capacity of goroutine pool and 1 second for expired duration.
 	p, _ := ants.NewPoolWithFunc(10, func(i interface{}) {
 		myFunc(i)
-		wg.Done()
 	})
 	defer p.Release()
+	p.PanicHandler = func(i interface{}) {
+		fmt.Println(".....................")
+	}
 	// Submit tasks one by one.
 	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
 		p.Invoke(int32(i))
 	}
-	wg.Wait()
+	p.Wait()
 	fmt.Printf("running goroutines: %d\n", p.Running())
 	fmt.Printf("finish all tasks, result is %d\n", sum)
 }

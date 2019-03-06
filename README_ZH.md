@@ -6,8 +6,8 @@
 
 [![Build Status][1]][2]
 [![codecov][3]][4]
-[![goreportcard for panjf2000/ants][5]][6]
-[![godoc for panjf2000/ants][7]][8]
+[![goreportcard for eleztian/ants][5]][6]
+[![godoc for eleztian/ants][7]][8]
 [![MIT Licence][9]][10]
 
 [英文](README.md) | [项目介绍文章传送门](http://blog.taohuawu.club/article/goroutine-pool)
@@ -21,6 +21,7 @@
 - 提供了友好的接口：任务提交、获取运行中的协程数量、动态调整协程池大小
 - 优雅处理panic，防止程序崩溃
 - 资源复用，极大节省内存使用量；在大规模批量并发任务场景下比原生goroutine并发具有更高的性能
+- 阻塞等待所有任务执行完成.
 
 ## 目前测试通过的Golang版本：
 
@@ -34,13 +35,13 @@
 ## 安装
 
 ``` sh
-go get -u github.com/panjf2000/ants
+go get -u github.com/eleztian/ants
 ```
 
 使用包管理工具 glide 安装:
 
 ``` sh
-glide get github.com/panjf2000/ants
+glide get github.com/eleztian/ants
 ```
 
 ## 使用
@@ -55,7 +56,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/panjf2000/ants"
+	"github.com/eleztian/ants"
 )
 
 var sum int32
@@ -116,7 +117,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/panjf2000/ants"
+	"github.com/eleztian/ants"
 )
 
 type Request struct {
@@ -249,13 +250,13 @@ Go Version: 1.9
 
 **从该demo测试吞吐性能对比可以看出，使用`ants`的吞吐性能相较于原生goroutine可以保持在2-6倍的性能压制，而内存消耗则可以达到10-20倍的节省优势。** 
 
-[1]: https://travis-ci.com/panjf2000/ants.svg?branch=master
-[2]: https://travis-ci.com/panjf2000/ants
-[3]: https://codecov.io/gh/panjf2000/ants/branch/master/graph/badge.svg
-[4]: https://codecov.io/gh/panjf2000/ants
-[5]: https://goreportcard.com/badge/github.com/panjf2000/ants
-[6]: https://goreportcard.com/report/github.com/panjf2000/ants
-[7]: https://godoc.org/github.com/panjf2000/ants?status.svg
-[8]: https://godoc.org/github.com/panjf2000/ants
+[1]: https://travis-ci.com/eleztian/ants.svg?branch=master
+[2]: https://travis-ci.com/eleztian/ants
+[3]: https://codecov.io/gh/eleztian/ants/branch/master/graph/badge.svg
+[4]: https://codecov.io/gh/eleztian/ants
+[5]: https://goreportcard.com/badge/github.com/eleztian/ants
+[6]: https://goreportcard.com/report/github.com/eleztian/ants
+[7]: https://godoc.org/github.com/eleztian/ants?status.svg
+[8]: https://godoc.org/github.com/eleztian/ants
 [9]: https://badges.frapsoft.com/os/mit/mit.svg?v=103
 [10]: https://opensource.org/licenses/mit-license.php
