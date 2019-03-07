@@ -63,7 +63,7 @@ type PoolWithFunc struct {
 
 	// PanicHandler is used to handle panics from each worker goroutine.
 	// if nil, panics will be thrown out again from worker goroutines.
-	PanicHandler func(interface{})
+	PanicHandler func(gid int64, arg interface{})
 
 	wg sync.WaitGroup
 }

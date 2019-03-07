@@ -173,9 +173,9 @@ func TestPanicHandler(t *testing.T) {
 	}
 	defer p0.Release()
 	var panicCounter int64
-	p0.PanicHandler = func(p interface{}) {
+	p0.PanicHandler = func(gid int64, p interface{}) {
 		atomic.AddInt64(&panicCounter, 1)
-		t.Logf("catch panic with PanicHandler: %v", p)
+		t.Logf("catch panic with PanicHandler: %v GO: %d", p, gid)
 	}
 	_ = p0.Submit(func() {
 		panic("Oops!")
@@ -196,7 +196,7 @@ func TestPanicHandler(t *testing.T) {
 		t.Fatalf("create new pool with func failed: %s", err.Error())
 	}
 	defer p1.Release()
-	p1.PanicHandler = func(p interface{}) {
+	p1.PanicHandler = func(gid int64, p interface{}) {
 		atomic.AddInt64(&panicCounter, 1)
 	}
 	_ = p1.Invoke("Oops!")

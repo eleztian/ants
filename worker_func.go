@@ -23,6 +23,7 @@
 package ants
 
 import (
+	"github.com/eleztian/gid"
 	"log"
 	"sync"
 	"time"
@@ -34,6 +35,9 @@ import (
 type WorkerWithFunc struct {
 	// pool who owns this worker.
 	pool *PoolWithFunc
+
+	// gid is this goroutine id
+	gid int64
 
 	// args is a job should be done.
 	args chan interface{}
@@ -51,9 +55,9 @@ func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
 			if p := recover(); p != nil {
 				w.pool.decRunning()
 				if w.pool.PanicHandler != nil {
-					w.pool.PanicHandler(p)
+					w.pool.PanicHandler(w.gid, p)
 				} else {
-					log.Printf("worker exits from a panic: %v", p)
+					log.Printf("GO %d exits from a panic: %v", w.gid, p)
 				}
 				wg.Done()
 			}
@@ -65,9 +69,14 @@ func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
 				w.pool.workerCache.Put(w)
 				return
 			}
-			w.pool.poolFunc(args)
+			gid.WithGoID(&w.gid, func() {
+				w.pool.poolFunc(args)
+			})
 			wg.Done()
 			w.pool.revertWorker(w)
+			if DEBUG {
+				log.Printf("GO %d finished\n", w.gid)
+			}
 		}
 	}()
 }

@@ -66,6 +66,7 @@ var (
 	}()
 
 	defaultAntsPool, _ = NewPool(DefaultAntsPoolSize)
+	DEBUG              bool
 )
 
 // Init a instance pool when importing ants.
