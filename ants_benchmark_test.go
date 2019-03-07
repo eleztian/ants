@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/panjf2000/ants"
+	"github.com/eleztian/ants"
 )
 
 const (
@@ -71,7 +71,6 @@ func BenchmarkSemaphoreWithFunc(b *testing.B) {
 			go func() {
 				demoPoolFunc(benchParam)
 				<-sema
-				wg.Done()
 			}()
 		}
 		wg.Wait()
@@ -79,20 +78,17 @@ func BenchmarkSemaphoreWithFunc(b *testing.B) {
 }
 
 func BenchmarkAntsPoolWithFunc(b *testing.B) {
-	var wg sync.WaitGroup
 	p, _ := ants.NewPoolWithFunc(benchAntsSize, func(i interface{}) {
 		demoPoolFunc(i)
-		wg.Done()
 	})
 	defer p.Release()
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		wg.Add(RunTimes)
 		for j := 0; j < RunTimes; j++ {
 			p.Invoke(benchParam)
 		}
-		wg.Wait()
+		p.Wait()
 	}
 	b.StopTimer()
 }
