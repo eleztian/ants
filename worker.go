@@ -55,6 +55,7 @@ func (w *Worker) run(wg *sync.WaitGroup) {
 				} else {
 					log.Printf("worker exits from a panic: %v", p)
 				}
+				wg.Done()
 			}
 		}()
 
