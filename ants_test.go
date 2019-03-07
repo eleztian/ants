@@ -29,7 +29,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/panjf2000/ants"
+	"github.com/eleztian/ants"
 )
 
 const (
@@ -55,18 +55,15 @@ var curMem uint64
 
 // TestAntsPoolWaitToGetWorker is used to test waiting to get worker.
 func TestAntsPoolWaitToGetWorker(t *testing.T) {
-	var wg sync.WaitGroup
 	p, _ := ants.NewPool(AntsSize)
 	defer p.Release()
 
 	for i := 0; i < n; i++ {
-		wg.Add(1)
-		p.Submit(func() {
+		_ = p.Submit(func() {
 			demoPoolFunc(Param)
-			wg.Done()
 		})
 	}
-	wg.Wait()
+	p.Wait()
 	t.Logf("pool, running workers number:%d", p.Running())
 	mem := runtime.MemStats{}
 	runtime.ReadMemStats(&mem)
@@ -76,18 +73,15 @@ func TestAntsPoolWaitToGetWorker(t *testing.T) {
 
 // TestAntsPoolWithFuncWaitToGetWorker is used to test waiting to get worker.
 func TestAntsPoolWithFuncWaitToGetWorker(t *testing.T) {
-	var wg sync.WaitGroup
 	p, _ := ants.NewPoolWithFunc(AntsSize, func(i interface{}) {
 		demoPoolFunc(i)
-		wg.Done()
 	})
 	defer p.Release()
 
 	for i := 0; i < n; i++ {
-		wg.Add(1)
-		p.Invoke(Param)
+		_ = p.Invoke(Param)
 	}
-	wg.Wait()
+	p.Wait()
 	t.Logf("pool with func, running workers number:%d", p.Running())
 	mem := runtime.MemStats{}
 	runtime.ReadMemStats(&mem)
@@ -152,15 +146,12 @@ func TestNoPool(t *testing.T) {
 
 func TestAntsPool(t *testing.T) {
 	defer ants.Release()
-	var wg sync.WaitGroup
 	for i := 0; i < n; i++ {
-		wg.Add(1)
-		ants.Submit(func() {
+		_ = ants.Submit(func() {
 			demoFunc()
-			wg.Done()
 		})
 	}
-	wg.Wait()
+	ants.Wait()
 
 	t.Logf("pool, capacity:%d", ants.Cap())
 	t.Logf("pool, running workers number:%d", ants.Running())
@@ -182,17 +173,14 @@ func TestPanicHandler(t *testing.T) {
 	}
 	defer p0.Release()
 	var panicCounter int64
-	var wg sync.WaitGroup
 	p0.PanicHandler = func(p interface{}) {
-		defer wg.Done()
 		atomic.AddInt64(&panicCounter, 1)
 		t.Logf("catch panic with PanicHandler: %v", p)
 	}
-	wg.Add(1)
-	p0.Submit(func() {
+	_ = p0.Submit(func() {
 		panic("Oops!")
 	})
-	wg.Wait()
+	p0.Wait()
 	c := atomic.LoadInt64(&panicCounter)
 	if c != 1 {
 		t.Errorf("panic handler didn't work, panicCounter: %d", c)
@@ -209,12 +197,10 @@ func TestPanicHandler(t *testing.T) {
 	}
 	defer p1.Release()
 	p1.PanicHandler = func(p interface{}) {
-		defer wg.Done()
 		atomic.AddInt64(&panicCounter, 1)
 	}
-	wg.Add(1)
-	p1.Invoke("Oops!")
-	wg.Wait()
+	_ = p1.Invoke("Oops!")
+	p1.Wait()
 	c = atomic.LoadInt64(&panicCounter)
 	if c != 2 {
 		t.Errorf("panic handler didn't work, panicCounter: %d", c)
@@ -230,7 +216,7 @@ func TestPoolPanicWithoutHandler(t *testing.T) {
 		t.Fatalf("create new pool failed: %s", err.Error())
 	}
 	defer p0.Release()
-	p0.Submit(func() {
+	_ = p0.Submit(func() {
 		panic("Oops!")
 	})
 
@@ -241,7 +227,7 @@ func TestPoolPanicWithoutHandler(t *testing.T) {
 		t.Fatalf("create new pool with func failed: %s", err.Error())
 	}
 	defer p1.Release()
-	p1.Invoke("Oops!")
+	_ = p1.Invoke("Oops!")
 }
 
 func TestPurge(t *testing.T) {
@@ -250,7 +236,7 @@ func TestPurge(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create TimingPool failed: %s", err.Error())
 	}
-	p.Submit(demoFunc)
+	_ = p.Submit(demoFunc)
 	time.Sleep(3 * ants.DefaultCleanIntervalTime * time.Second)
 	if p.Running() != 0 {
 		t.Error("all p should be purged")
@@ -260,7 +246,7 @@ func TestPurge(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create TimingPoolWithFunc failed: %s", err.Error())
 	}
-	p1.Invoke(1)
+	_ = p1.Invoke(1)
 	time.Sleep(3 * ants.DefaultCleanIntervalTime * time.Second)
 	if p.Running() != 0 {
 		t.Error("all p should be purged")
