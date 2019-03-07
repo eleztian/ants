@@ -59,7 +59,7 @@ func TestAntsPoolWaitToGetWorker(t *testing.T) {
 	defer p.Release()
 
 	for i := 0; i < n; i++ {
-		_ = p.Submit(func() {
+		_, _ = p.Submit(func() {
 			demoPoolFunc(Param)
 		})
 	}
@@ -147,7 +147,7 @@ func TestNoPool(t *testing.T) {
 func TestAntsPool(t *testing.T) {
 	defer ants.Release()
 	for i := 0; i < n; i++ {
-		_ = ants.Submit(func() {
+		_, _ = ants.Submit(func() {
 			demoFunc()
 		})
 	}
@@ -177,7 +177,7 @@ func TestPanicHandler(t *testing.T) {
 		atomic.AddInt64(&panicCounter, 1)
 		t.Logf("catch panic with PanicHandler: %v GO: %d", p, gid)
 	}
-	_ = p0.Submit(func() {
+	_, _ = p0.Submit(func() {
 		panic("Oops!")
 	})
 	p0.Wait()
@@ -216,7 +216,7 @@ func TestPoolPanicWithoutHandler(t *testing.T) {
 		t.Fatalf("create new pool failed: %s", err.Error())
 	}
 	defer p0.Release()
-	_ = p0.Submit(func() {
+	_, _ = p0.Submit(func() {
 		panic("Oops!")
 	})
 
@@ -236,7 +236,7 @@ func TestPurge(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create TimingPool failed: %s", err.Error())
 	}
-	_ = p.Submit(demoFunc)
+	_, _ = p.Submit(demoFunc)
 	time.Sleep(3 * ants.DefaultCleanIntervalTime * time.Second)
 	if p.Running() != 0 {
 		t.Error("all p should be purged")

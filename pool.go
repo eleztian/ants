@@ -124,13 +124,14 @@ func NewTimingPool(size, expiry int) (*Pool, error) {
 //---------------------------------------------------------------------------
 
 // Submit submits a task to this pool.
-func (p *Pool) Submit(task func()) error {
+func (p *Pool) Submit(task func()) (int64, error) {
 	if 1 == atomic.LoadInt32(&p.release) {
-		return ErrPoolClosed
+		return -1, ErrPoolClosed
 	}
 	p.wg.Add(1)
-	p.retrieveWorker().task <- task
-	return nil
+	w := p.retrieveWorker()
+	w.task <- task
+	return w.gid, nil
 }
 
 // Running returns the number of the currently running goroutines.

@@ -72,7 +72,7 @@ var (
 // Init a instance pool when importing ants.
 
 // Submit submits a task to pool.
-func Submit(task func()) error {
+func Submit(task func()) (int64, error) {
 	return defaultAntsPool.Submit(task)
 }
 
