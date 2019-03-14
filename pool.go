@@ -61,9 +61,6 @@ type Pool struct {
 	// PanicHandler is used to handle panics from each worker goroutine.
 	// if nil, panics will be thrown out again from worker goroutines.
 	PanicHandler func(gid int64, arg interface{})
-
-	// wg use to wait pool finished all tasks.
-	wg sync.WaitGroup
 }
 
 // clear expired workers periodically.
@@ -128,7 +125,6 @@ func (p *Pool) Submit(task func()) (int64, error) {
 	if 1 == atomic.LoadInt32(&p.release) {
 		return -1, ErrPoolClosed
 	}
-	p.wg.Add(1)
 	w := p.retrieveWorker()
 	w.task <- task
 	return w.gid, nil
@@ -177,11 +173,6 @@ func (p *Pool) Release() error {
 	return nil
 }
 
-// Wait wait all task finished.
-func (p *Pool) Wait() {
-	p.wg.Wait()
-}
-
 //---------------------------------------------------------------------------
 
 // incRunning increases the number of the currently running goroutines.
@@ -216,7 +207,7 @@ func (p *Pool) retrieveWorker() *Worker {
 				task: make(chan func(), workerChanCap),
 			}
 		}
-		w.run(&p.wg)
+		w.run()
 	} else {
 		for {
 			p.cond.Wait()

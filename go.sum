@@ -1,0 +1,8 @@
+github.com/eleztian/gid v0.0.0-20190307084703-2b854565e968 h1:1iZZgi6UHejbOStwkUDFTEJMmXJZCSwWlKZg81kA+aY=
+github.com/eleztian/gid v0.0.0-20190307084703-2b854565e968/go.mod h1:SPkZGC6GLTDye5ecTe0OL9ZgCDYhnkX/ALdXczO3P8U=
+github.com/eleztian/gid v1.0.0 h1:+QZ36RJNTC0+JkezyH9RNUkCStJ9FSVRfP9v+fdhcUI=
+github.com/eleztian/gid v1.0.0/go.mod h1:SPkZGC6GLTDye5ecTe0OL9ZgCDYhnkX/ALdXczO3P8U=
+github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
+github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
+github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9AWI=
+github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=

@@ -25,7 +25,6 @@ package ants
 import (
 	"github.com/eleztian/gid"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -48,7 +47,7 @@ type WorkerWithFunc struct {
 
 // run starts a goroutine to repeat the process
 // that performs the function calls.
-func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
+func (w *WorkerWithFunc) run() {
 	w.pool.incRunning()
 	go func() {
 		defer func() {
@@ -59,7 +58,6 @@ func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
 				} else {
 					log.Printf("GO %d exits from a panic: %v", w.gid, p)
 				}
-				wg.Done()
 			}
 		}()
 
@@ -72,7 +70,6 @@ func (w *WorkerWithFunc) run(wg *sync.WaitGroup) {
 			gid.WithGoID(&w.gid, func() {
 				w.pool.poolFunc(args)
 			})
-			wg.Done()
 			w.pool.revertWorker(w)
 			if DEBUG {
 				log.Printf("GO %d finished\n", w.gid)
