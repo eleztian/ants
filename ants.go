@@ -95,8 +95,3 @@ func Free() int {
 func Release() {
 	_ = defaultAntsPool.Release()
 }
-
-// Wait wait all task finished.
-func Wait() {
-	defaultAntsPool.Wait()
-}

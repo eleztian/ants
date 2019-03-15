@@ -78,17 +78,20 @@ func BenchmarkSemaphoreWithFunc(b *testing.B) {
 }
 
 func BenchmarkAntsPoolWithFunc(b *testing.B) {
+
+	wg := sync.WaitGroup{}
 	p, _ := ants.NewPoolWithFunc(benchAntsSize, func(i interface{}) {
 		demoPoolFunc(i)
+		wg.Done()
 	})
 	defer p.Release()
-
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < RunTimes; j++ {
+			wg.Add(1)
 			p.Invoke(benchParam)
 		}
-		p.Wait()
+		wg.Wait()
 	}
 	b.StopTimer()
 }

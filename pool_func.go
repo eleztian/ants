@@ -129,7 +129,6 @@ func (p *PoolWithFunc) Invoke(args interface{}) error {
 	if 1 == atomic.LoadInt32(&p.release) {
 		return ErrPoolClosed
 	}
-	p.wg.Add(1)
 	p.retrieveWorker().args <- args
 	return nil
 }
